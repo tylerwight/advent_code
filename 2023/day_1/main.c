@@ -22,6 +22,29 @@ int main(){
         printf("===========\n");
         printf("working on line: %s \n", line);
 
+        char *pone, *ptwo, *pthree, *pfour, *pfive, *psix, *pseven, *peight, *pnine;
+
+        //this can't be the right way... grody
+        pone = strstr(line, "one");
+        ptwo = strstr(line, "two");
+        pthree = strstr(line, "three");
+        pfour = strstr(line, "four");
+        pfive = strstr(line, "five");
+        psix = strstr(line, "six");
+        pseven = strstr(line, "seven");
+        peight = strstr(line, "eight");
+        pnine = strstr(line, "nine");
+
+        printf("pone %p");
+        printf("ptwo %p");
+        printf("pthree %p");
+        printf("pfour %p");
+        printf("pfive %p");
+        printf("psix %p");
+        printf("pseven %p");
+        printf("peight %p");
+        printf("pnine %p");
+
         replace_substring(line, "one", "1");
         replace_substring(line, "two", "2");
         replace_substring(line, "three", "3");
