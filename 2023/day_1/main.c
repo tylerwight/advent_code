@@ -8,8 +8,7 @@ char *replace_numstring_with_digitchar(char *source);
 
 int main(){
     FILE *file;
-    char line[100] = {0};
-    const char *digits[] = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
+    char line[200] = {0};
     int total = 0;
     int result;
 
@@ -22,57 +21,15 @@ int main(){
     while (fgets(line, sizeof(line), file)) {
         int line_len = strlen(line);
         printf("===========\n");
-        printf("working on line: %s \n", line);
-
-        char *pfound = NULL;
-        int found_digit;
-        do{ 
-            char *ptmp = NULL;
-            pfound = NULL;
-            //printf("line looks like this: %s\n", line);
-            for (int i = 0; i < 9; i++){
-                // printf("working on index %d\n", i);
-                //printf("Working on digit: %s \n", digits[i]);
-
-                ptmp = strstr(line, digits[i]);
-
-                if (pfound == NULL && ptmp != NULL){
-                    pfound = ptmp;
-                    found_digit = i;
-                    printf("found string %s\n", digits[i]);
-                }
-
-                if (ptmp < pfound && ptmp != NULL){
-                    //printf("tmp %p   <    found %p \n", ptmp, pfound);
-                    pfound = ptmp;
-                    found_digit = i;
-                    printf("found string %s and it appears earlier\n ", digits[i]);
-                }
-                //printf("found ptr: %p\n ", pfound);
-                //printf("found ptr: %d", *pfound);
-                
-            }
-            
-            char c[2];
-            c[0] = (found_digit + 1 + '0');
-            c[1] = '\0';
-
-            if (pfound != NULL){
-                printf("replacing '%s' with '%s' \n", digits[found_digit], c);
-                replace_substring(line, digits[found_digit], c );
-                printf("line looks like: '%s' \n", line);
-            }
-            printf("----\n");
-
-        }while(pfound != NULL);
-
+        printf("working on line       : %s \n", line);
+        replace_numstring_with_digitchar(line);
         printf("line after str replace: %s \n", line);
 
         result = get_advent_int(line, line_len);
 
 
         total += result;
-        printf("result: %d \n", result);
+        printf("result                : %d \n", result);
         printf("running total: %d\n", total);
         printf("adress of line: %p \n", line);
 
@@ -153,5 +110,47 @@ char *replace_substring(char *source, const  char *target, const  char *replacem
 
 
 char *replace_numstring_with_digitchar(char *source) {
-    printf("hey");
+    const char *digits[] = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
+    char *pfound = NULL;
+    int found_digit;
+    do{ 
+        char *ptmp = NULL;
+        pfound = NULL;
+        //printf("line looks like this: %s\n", line);
+        for (int i = 0; i < 9; i++){
+            // printf("working on index %d\n", i);
+            //printf("Working on digit: %s \n", digits[i]);
+
+            ptmp = strstr(source, digits[i]);
+
+            if (pfound == NULL && ptmp != NULL){
+                pfound = ptmp;
+                found_digit = i;
+                printf("found string %s\n", digits[i]);
+            }
+
+            if (ptmp < pfound && ptmp != NULL){
+                //printf("tmp %p   <    found %p \n", ptmp, pfound);
+                pfound = ptmp;
+                found_digit = i;
+                printf("found string %s and it appears earlier\n ", digits[i]);
+            }
+            //printf("found ptr: %p\n ", pfound);
+            //printf("found ptr: %d", *pfound);
+            
+        }
+        
+        char c[2];
+        c[0] = (found_digit + 1 + '0');
+        c[1] = '\0';
+
+        if (pfound != NULL){
+            printf("replacing '%s' with '%s' \n", digits[found_digit], c);
+            replace_substring(source, digits[found_digit], c );
+            printf("source looks like: '%s' \n", source);
+        }
+        printf("----\n");
+
+    }while(pfound != NULL);
+
 }
