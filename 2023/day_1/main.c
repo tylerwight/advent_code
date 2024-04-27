@@ -4,14 +4,16 @@
 void print_int_array(int input[], int length);
 int get_advent_int(char input[], int length);
 char *replace_substring(char *source, const char *target, const char *replacement);
+char *replace_numstring_with_digitchar(char *source);
 
 int main(){
     FILE *file;
     char line[100] = {0};
+    const char *digits[] = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
     int total = 0;
     int result;
 
-    file = fopen("small_input", "r"); // Open the file for reading
+    file = fopen("input", "r"); // Open the file for reading
     if (file == NULL) {
         perror("Error opening file");
         return -1;
@@ -22,38 +24,47 @@ int main(){
         printf("===========\n");
         printf("working on line: %s \n", line);
 
-        char *pone, *ptwo, *pthree, *pfour, *pfive, *psix, *pseven, *peight, *pnine;
+        char *pfound = NULL;
+        int found_digit;
+        do{ 
+            char *ptmp = NULL;
+            pfound = NULL;
+            //printf("line looks like this: %s\n", line);
+            for (int i = 0; i < 9; i++){
+                // printf("working on index %d\n", i);
+                //printf("Working on digit: %s \n", digits[i]);
 
-        //this can't be the right way... grody
-        pone = strstr(line, "one");
-        ptwo = strstr(line, "two");
-        pthree = strstr(line, "three");
-        pfour = strstr(line, "four");
-        pfive = strstr(line, "five");
-        psix = strstr(line, "six");
-        pseven = strstr(line, "seven");
-        peight = strstr(line, "eight");
-        pnine = strstr(line, "nine");
+                ptmp = strstr(line, digits[i]);
 
-        printf("pone %p");
-        printf("ptwo %p");
-        printf("pthree %p");
-        printf("pfour %p");
-        printf("pfive %p");
-        printf("psix %p");
-        printf("pseven %p");
-        printf("peight %p");
-        printf("pnine %p");
+                if (pfound == NULL && ptmp != NULL){
+                    pfound = ptmp;
+                    found_digit = i;
+                    printf("found string %s\n", digits[i]);
+                }
 
-        replace_substring(line, "one", "1");
-        replace_substring(line, "two", "2");
-        replace_substring(line, "three", "3");
-        replace_substring(line, "four", "4");
-        replace_substring(line, "five", "5");
-        replace_substring(line, "six", "6");
-        replace_substring(line, "seven", "7");
-        replace_substring(line, "eight", "8");
-        replace_substring(line, "nine", "9");
+                if (ptmp < pfound && ptmp != NULL){
+                    //printf("tmp %p   <    found %p \n", ptmp, pfound);
+                    pfound = ptmp;
+                    found_digit = i;
+                    printf("found string %s and it appears earlier\n ", digits[i]);
+                }
+                //printf("found ptr: %p\n ", pfound);
+                //printf("found ptr: %d", *pfound);
+                
+            }
+            
+            char c[2];
+            c[0] = (found_digit + 1 + '0');
+            c[1] = '\0';
+
+            if (pfound != NULL){
+                printf("replacing '%s' with '%s' \n", digits[found_digit], c);
+                replace_substring(line, digits[found_digit], c );
+                printf("line looks like: '%s' \n", line);
+            }
+            printf("----\n");
+
+        }while(pfound != NULL);
 
         printf("line after str replace: %s \n", line);
 
@@ -115,9 +126,9 @@ char *replace_substring(char *source, const  char *target, const  char *replacem
         //create ptr that points to first char of the found target (inside of source)
         char *p = strstr(source, target);
 
-        printf("source: %s \n", source);
-        printf("source addr: %p \n", source);
-        printf("strfound addr: %p \n", p);
+        //printf("source: %s \n", source);
+        //printf("source addr: %p \n", source);
+        //printf("strfound addr: %p \n", p);
 
         //because we are in the loop we know we found the substr(target) in here somewhere (source)
         size_t target_len = strlen(target);
@@ -133,9 +144,14 @@ char *replace_substring(char *source, const  char *target, const  char *replacem
 
 
 
-        printf("target: %s \n", target);
+        //printf("target: %s \n", target);
         //printf("target len: %ld \n", strlen(target));
-        printf("replacement: %s \n - \n", replacement);
+        //printf("replacement: %s \n - \n", replacement);
     }
 
+}
+
+
+char *replace_numstring_with_digitchar(char *source) {
+    printf("hey");
 }
