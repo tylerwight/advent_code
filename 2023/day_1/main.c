@@ -12,26 +12,30 @@ int main(){
     int total = 0;
     int result;
 
-    file = fopen("input", "r"); // Open the file for reading
+    //open a file to read our data
+    file = fopen("input", "r");
     if (file == NULL) {
         perror("Error opening file");
         return -1;
     }
 
+    //loop through the file line by line
     while (fgets(line, sizeof(line), file)) {
         int line_len = strlen(line);
         printf("===========\n");
         printf("working on line       : %s \n", line);
+        //comment out replace_numstring... if you want to solution to part one
+        //replaces all words that spell a number for part 2
         replace_numstring_with_digitchar(line);
         printf("line after str replace: %s \n", line);
 
+        //takes the string and gets the left most and right most digits and concats them into a 2 digit integer
         result = get_advent_int(line, line_len);
 
-
+        // add them all up
         total += result;
-        printf("result                : %d \n", result);
+        printf("result: %d \n", result);
         printf("running total: %d\n", total);
-        printf("adress of line: %p \n", line);
 
         printf("===========\n");
         
@@ -111,46 +115,51 @@ char *replace_substring(char *source, const  char *target, const  char *replacem
 
 char *replace_numstring_with_digitchar(char *source) {
     const char *digits[] = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
+    // I went through this with a string replacement solution. Based on the examples I thought I had to replace the strings in order and if they shared a letter, it broke the world and thus wasn't used:
+    // this is in the example: 'eightwothree' and they say it represents 83. My code would turn 'eightwothree" into "8wo3". WHich does work in this case. But this isn't how they want it done
+    // No test case really shows it well, so it's hard to pick out but for example "eighthree" should still be 83. My solution would turn 'eighthree' into '8hee' which turns into 88, but that is wrong
+    // A test case like that should have been included imo
+    // So, I wrote all of this going down the string substituion path when I shouldn't have.
+    // This digits_replace var is a quick hacky way of turning my string subsitution into a working solution. 
+    //Really I should rewrite the whole solution to just count and keep track of the digits made from words, rather than replace the string. But right now I'd rather move forward
+    const char *digits_replace[] = {"1ne", "2wo", "3hree", "4our", "5ive", "6ix", "7even", "8ight", "9ine"};
     char *pfound = NULL;
     int found_digit;
+
+    //Keep searching string until we found nothing matching the digits[] string
     do{ 
         char *ptmp = NULL;
         pfound = NULL;
-        //printf("line looks like this: %s\n", line);
+
+        //for each digit[i] search the line for that string
         for (int i = 0; i < 9; i++){
-            // printf("working on index %d\n", i);
-            //printf("Working on digit: %s \n", digits[i]);
 
             ptmp = strstr(source, digits[i]);
 
+            //if we found something, and our found variable hasn't been populated, add that one to found
             if (pfound == NULL && ptmp != NULL){
                 pfound = ptmp;
                 found_digit = i;
                 printf("found string %s\n", digits[i]);
             }
 
+            //if we found something, and it's earlier in the string that what we previously found, update to the earlier one
             if (ptmp < pfound && ptmp != NULL){
-                //printf("tmp %p   <    found %p \n", ptmp, pfound);
                 pfound = ptmp;
                 found_digit = i;
                 printf("found string %s and it appears earlier\n ", digits[i]);
             }
-            //printf("found ptr: %p\n ", pfound);
-            //printf("found ptr: %d", *pfound);
             
         }
-        
-        char c[2];
-        c[0] = (found_digit + 1 + '0');
-        c[1] = '\0';
-
+        //if we found something (should be earlier occurence), replace it
         if (pfound != NULL){
-            printf("replacing '%s' with '%s' \n", digits[found_digit], c);
-            replace_substring(source, digits[found_digit], c );
+            printf("replacing '%s' with '%s' \n", digits[found_digit], digits_replace[found_digit]);
+            replace_substring(source, digits[found_digit], digits_replace[found_digit] );
             printf("source looks like: '%s' \n", source);
         }
         printf("----\n");
 
+    //if we did end up finding something, do it all over again, until we find nothing.
     }while(pfound != NULL);
 
 }
