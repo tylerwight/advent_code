@@ -37,7 +37,7 @@ int main(){
 
         int game_number = get_game_number(line);
         int game_possible = is_game_possible(line, colors, max_colors, 3);
-        
+
         printf("game #: %d \n", game_number);
         printf("is possible output: %d\n", game_possible);
 
@@ -92,7 +92,7 @@ int get_game_number(char *source){
 
 }
 
-
+//needs refactored, this is ugly and bad
 bool is_game_possible(char *source, char **colors, int *max_colors, int length){
     for (int i = 0; i < length; i++){
         printf("Maxium: %s, %d\n", colors[i], max_colors[i]);
