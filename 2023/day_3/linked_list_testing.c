@@ -49,6 +49,7 @@ char* getNodeData(Node *head, int index) {
 }
 
 
+
 // Function to add a node to the beginning of the list
 void addNode(Node **head, const char *str) {
     Node *newNode = createNode(str); // Create a new node
@@ -91,7 +92,7 @@ int main() {
     char line[200] = {0};
 
     //open a file to read our data
-    file = fopen("small_input", "r");
+    file = fopen("dumb_input", "r");
     if (file == NULL) {
         perror("Error opening file");
         return -1;
