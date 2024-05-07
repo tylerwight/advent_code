@@ -59,7 +59,7 @@ int main(){
     //go through every character in the data and search for a * symbol
     for (loop.y = 0; loop.y < FILE_LENGTH; loop.y++){
         for (loop.x = 0; loop.x < FILE_LENGTH; loop.x++){
-            
+
             if (lines[loop.y][loop.x] == '*'){
                 printf("\nfound a * at coords [%d][%d]\n", loop.x, loop.y);
 
@@ -78,36 +78,34 @@ int main(){
 
 
                 //loop through all the data we got per line
-                // 3 loops, one for each line
+                // 3 loops, one for each set of line data 
                 for (int i = 0; i < line1_length; i++){
-                    printf("    in line1 we found: %d at location X: %d, Y: %d and they have %d digits\n", line1[i].number, line1[i].numbercoords.x, line1[i].numbercoords.y, line1[i].digits);
-
-                    if (( loop.x - line1[i].numbercoords.x <= line1[i].digits) && ( loop.x - line1[i].numbercoords.x >= -1)){
-                        printf("    this number ^^^^ is touching a *\n");
+                    // check if the numbers XY coords are touching the *
+                    // because numbers can be up to 3 digits and our X/Y coords only points to first digit we gotta do some mathing
+                    if (( loop.x - line1[i].numbercoords.x <= line1[i].digits) && ( loop.x - line1[i].numbercoords.x >= -1)){ 
+                        printf("    Touching Number: %d  at location X: %d, Y: %d and they have %d digits\n", line1[i].number, line1[i].numbercoords.x, line1[i].numbercoords.y, line1[i].digits);
                         touching_numbers[total_touching_numbers] = line1[i].number;
                         total_touching_numbers += 1;
                     }
                 }
 
                 for (int i = 0; i < line2_length; i++){
-                    printf("    in line2 we found: %d at location X: %d, Y: %d and they have %d digits\n", line2[i].number, line2[i].numbercoords.x, line2[i].numbercoords.y, line2[i].digits);
-
                     if (( loop.x - line2[i].numbercoords.x <= line2[i].digits) && ( loop.x - line2[i].numbercoords.x >= -1)){
-                        printf("    this number ^^^^ is touching a *\n");
+                        printf("    Touching Number: %d at location X: %d, Y: %d and they have %d digits\n", line2[i].number, line2[i].numbercoords.x, line2[i].numbercoords.y, line2[i].digits);
                         touching_numbers[total_touching_numbers] = line2[i].number;
                         total_touching_numbers += 1;
                     }
                 }
                 for (int i = 0; i < line3_length; i++){
-                    printf("    in line3 we found: %d at location X: %d, Y: %d and they have %d digits\n", line3[i].number, line3[i].numbercoords.x, line3[i].numbercoords.y, line3[i].digits);
                     if (( loop.x - line3[i].numbercoords.x <= line3[i].digits) && ( loop.x - line3[i].numbercoords.x >= -1)){
-                        printf("    this number ^^^^ is touching a *\n");
+                        printf("    Touching Number: %d at location X: %d, Y: %d and they have %d digits\n", line3[i].number, line3[i].numbercoords.x, line3[i].numbercoords.y, line3[i].digits);
                         touching_numbers[total_touching_numbers] = line3[i].number;
                         total_touching_numbers += 1;
 
                     }
                 }
-                printf("    total touching numbers: %d \n", total_touching_numbers);
+
+                //printf("    total touching numbers: %d \n", total_touching_numbers);
                 
                 if (total_touching_numbers == 2){
                     int gear_ratio = touching_numbers[0] * touching_numbers[1];
