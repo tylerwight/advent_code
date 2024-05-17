@@ -122,7 +122,7 @@ char *replace_numstring_with_digitchar(char *source) {
     // So, I wrote all of this going down the string substituion path when I shouldn't have.
     // This digits_replace var is a quick hacky way of turning my string subsitution into a working solution. 
     //Really I should rewrite the whole solution to just count and keep track of the digits made from words, rather than replace the string. But right now I'd rather move forward
-    const char *digits_replace[] = {"1ne", "2wo", "3hree", "4our", "5ive", "6ix", "7even", "8ight", "9ine"};
+    const char *digits_replace[] = {"1e", "2o", "3e", "4r", "5e", "6x", "7n", "8t", "9e"};
     char *pfound = NULL;
     int found_digit;
 

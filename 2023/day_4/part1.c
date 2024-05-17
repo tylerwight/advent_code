@@ -24,7 +24,6 @@ int main(){
 
     //loop through the file line by line
     while (fgets(line, sizeof(line), file)) {
-        int line_len = strlen(line);
         int winning_numbers[MAX_CARD_INTS] = {0};
         int winning_numbers_count = 0;
         int my_numbers[MAX_CARD_INTS] = {0};
