@@ -4,39 +4,32 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-
-
-int get_game_number(char *source);
-int reverse_string(char *source);
-bool is_game_possible(char *source, char **colors, int *max_colors, int length);
-
+//example line: "Game 99: 11 red, 8 green; 16 red, 10 green; 9 red, 6 green; 3 blue, 2 red, 4 green"
+int get_game_number(char *source);// Gets game number from line
+bool is_game_possible(char *source, char **colors, int *max_colors);// Takes in a full line and outputs if game is possible
+void get_colors(char *source, int *red_num, int *green_num, int *blue_num);// takes in line like "3 blue, 2 red, 4 green" and sets the numbers given to the counts of them (0 if nothing found)
 
 int main(){
+    //file open stuff
     FILE *file;
     char line[200] = {0};
-
-    //open a file to read our data
     file = fopen("input", "r");
     if (file == NULL) {
         perror("Error opening file");
         return -1;
     }
-
-
+    //setup values
     char *colors[] = {"red", "green", "blue"};
     int max_colors[] = {12, 13, 14};
     int total = 0;
 
-
-    //loop through the file line by line
+    //Main loop of data
     while (fgets(line, sizeof(line), file)) {
-        int line_len = strlen(line);
-
         printf("===========\n");
         printf("line: %s \n", line);
 
         int game_number = get_game_number(line);
-        int game_possible = is_game_possible(line, colors, max_colors, 3);
+        int game_possible = is_game_possible(line, colors, max_colors);
 
         printf("game #: %d \n", game_number);
         printf("is possible output: %d\n", game_possible);
@@ -45,126 +38,62 @@ int main(){
             total = total + (game_number);
         }
         printf("running total: %d\n", total);
-
-        
     }
 
-    fclose(file); // Close the file
+
+    fclose(file);
     return 0;
 }
 
-
-int reverse_string(char *source){
-
-    int length = strlen(source);
-
-    for (int i = 0, j = length - 1; i <= j; i++, j--) {
-        char c = source[i];
-        source[i] = source[j];
-        source[j] = c;
-    }
-
-    return 0;
-}
 
 int get_game_number(char *source){
-    char *pfound = NULL;
-    pfound = strstr(source, ":"); // search for ":" and work backwards. This symbol only occures once in our data, and is right after the game number
-    int length = pfound - source; // get the length of chars it takes to reach :, so we don't search the whole string
-    
-    char game_number[10] = {'\0'}; //at max we support 10 digits
-    int found_digits = 0; // keep track of how many digits we found, to put them in our variable in the right place
-
-    //loop through the source string until we hit the :
-    for (int i = 0; i < length; i++){
-        
-        //if we see a digit add it to to game_numbers
-        if (isdigit(source[i])){
-            game_number[found_digits] = source[i];
-            found_digits++;
-        }
+    int gameNumber;
+    if (sscanf(source, "Game %d:", &gameNumber) == 1) {
+        return gameNumber;
+    } else {
+        return -1; // Error: Game number not found
     }
-    
-    if (strlen(game_number) > 0){
-        return atoi(game_number); //convert from string to int and return if we found numbers
-    }
-    return 0;  //could not find any the game number
 
 }
 
-//needs refactored, this is ugly and bad
-bool is_game_possible(char *source, char **colors, int *max_colors, int length){
-    for (int i = 0; i < length; i++){
-        printf("Maxium: %s, %d\n", colors[i], max_colors[i]);
+bool is_game_possible(char *source, char **colors, int *max_colors){
+    char *pstart = strstr(source, ":") + 1;
+    char *token = strtok(pstart, ";");
 
+    //token in this loop will look like "3 blue, 2 red, 4 green"
+    while (token != NULL){
+        int  red_num = 0, green_num = 0, blue_num = 0;
+        get_colors(token, &red_num, &green_num, &blue_num );
+
+        if (red_num > max_colors[0] || green_num > max_colors[1] || blue_num > max_colors[2]) {
+            return false;
+        }
+
+        token = strtok(NULL, ";");
     }
-    
-    
-    char *pstart = strstr(source, ":") +1;
-    //printf("PSTART 1: %s\n", pstart);
-    
-    int loop_done = 0;
-    while(loop_done != 1) {
-        char *next_semi = strstr(pstart,";");
-        int working_str_len = (next_semi - pstart);
-        char working_str[50] = {'\0'};
 
-        if (strstr(pstart, ";") == NULL){
-            loop_done = 1;
-            strncpy(working_str, (pstart +1), strlen(pstart)-1);
-        } else{
-            strncpy(working_str, (pstart + 1), (working_str_len - 1));
-        }
-        printf("working on this iteration: %s\n", working_str);
-
-        
-
-        char *deeper_str_start = working_str;
-        int deeper_loop_done = 0;
-    
-        while (deeper_loop_done != 1){
-            char *next_comma_working_str = (strstr(deeper_str_start, ","));
-            int segment_len = (next_comma_working_str - deeper_str_start);
-            char deeper_working_string[50] = {'\0'};
-
-            //printf("segment_len: %d\n", segment_len);
-            ///printf("deeper_str_start: %s\n", deeper_str_start);
-            ///printf("next_comma_working_str: %s\n", next_comma_working_str);
-
-            if (strstr(deeper_str_start + 1, ",") == NULL){
-                strncpy(deeper_working_string, deeper_str_start, strlen(deeper_str_start));
-                deeper_loop_done = 1;
-
-            } else{
-                strncpy(deeper_working_string,deeper_str_start, segment_len);
-            }
-
-            //printf("found deeper str: %s\n", deeper_working_string);
-
-            //printf("atoi of str: %d\n", atoi(deeper_working_string));
-
-            for (int i = 0; i < length; i++){
-                if (strstr(deeper_working_string, colors[i])){
-                    //printf("deeperstr contains: %s\n", colors[i]);
-                    if ( atoi(deeper_working_string) > max_colors[i]){
-                        printf("%s has exceeded it's max of %d, we saw %d\n", colors[i], max_colors[i], atoi(deeper_working_string));
-                        return false;
-                    }
-                }
-            }
-            if (deeper_loop_done != 1){
-                deeper_str_start = next_comma_working_str + 1;
-            }
-            
-
-        }
-
-
-
-
-        if (loop_done != 1){
-            pstart = next_semi + 1;
-        }
-    }
     return true;
+}
+
+void get_colors(char *source, int *red_num, int *green_num, int *blue_num ){
+    char *saveptr;
+    char *token = strtok_r(source, ",", &saveptr);
+
+    //token in this loop will look like "3 blue"
+    while (token != NULL){
+        int num;
+        char color[10];
+
+        sscanf(token, " %d %s", &num, color);
+
+        if (strcmp(color, "red") == 0){
+            *red_num = num;
+        } else if (strcmp(color, "blue") == 0) {
+                *blue_num = num;
+        } else if (strcmp(color, "green") == 0) {
+                *green_num = num;
+        }
+
+        token = strtok_r(NULL, ",", &saveptr);
+    }
 }

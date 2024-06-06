@@ -6,9 +6,32 @@
 
 
 
-int get_game_number(char *source);
 int reverse_string(char *source);
 int get_game_power(char *source, char **colors, int *max_colors, int length);
+
+void split_game(char *source, int *left_nums, int *right_nums, int *left_count, int *right_count){
+    char *separator = strchr(source, '|');
+    char *left_side = (strchr(source, ':') + 1);
+    char *right_side = separator + 1;
+    *separator = '\0';
+    *left_count = 0;
+    *right_count = 0;
+
+    char *token = strtok(left_side, " "); //use <space> as delimiter
+    while (token != NULL){
+        left_nums[*left_count] = atoi(token);
+        (*left_count)++;
+        token = strtok(NULL, " ");
+    }
+
+    token = strtok(right_side, " ");
+    while (token != NULL){
+        right_nums[*right_count] = atoi(token);
+        (*right_count)++;
+        token = strtok(NULL, " ");
+    }
+
+}
 
 
 int main(){
@@ -35,7 +58,6 @@ int main(){
         printf("===========\n");
         printf("line: %s \n", line);
 
-        //int game_number = get_game_number(line);
         int game_power = get_game_power(line, colors, max_colors, 3);
         printf("game power: %d\n", game_power);
 
@@ -51,7 +73,6 @@ int main(){
 
 
 int reverse_string(char *source){
-
     int length = strlen(source);
 
     for (int i = 0, j = length - 1; i <= j; i++, j--) {
@@ -63,37 +84,11 @@ int reverse_string(char *source){
     return 0;
 }
 
-int get_game_number(char *source){
-    char *pfound = NULL;
-    pfound = strstr(source, ":"); // search for ":" and work backwards. This symbol only occures once in our data, and is right after the game number
-    int length = pfound - source; // get the length of chars it takes to reach :, so we don't search the whole string
-    
-    char game_number[10] = {'\0'}; //at max we support 10 digits
-    int found_digits = 0; // keep track of how many digits we found, to put them in our variable in the right place
-
-    //loop through the source string until we hit the :
-    for (int i = 0; i < length; i++){
-        
-        //if we see a digit add it to to game_numbers
-        if (isdigit(source[i])){
-            game_number[found_digits] = source[i];
-            found_digits++;
-        }
-    }
-    
-    if (strlen(game_number) > 0){
-        return atoi(game_number); //convert from string to int and return if we found numbers
-    }
-    return 0;  //could not find any the game number
-
-}
-
 //needs refactored, this is ugly and bad
 int get_game_power(char *source, char **colors, int *max_colors, int length){    
     char *pstart = strstr(source, ":") +1;
     int redbiggest = 1, bluebiggest = 1, greenbiggest = 1;
 
-    //printf("PSTART 1: %s\n", pstart);
     
     int loop_done = 0;
     while(loop_done != 1) {
@@ -107,10 +102,9 @@ int get_game_power(char *source, char **colors, int *max_colors, int length){
         } else{
             strncpy(working_str, (pstart + 1), (working_str_len - 1));
         }
-        //printf("working on this iteration: %s\n", working_str);
+
 
         
-
         char *deeper_str_start = working_str;
         int deeper_loop_done = 0;
         
@@ -120,9 +114,6 @@ int get_game_power(char *source, char **colors, int *max_colors, int length){
             int segment_len = (next_comma_working_str - deeper_str_start);
             char deeper_working_string[50] = {'\0'};
 
-            //printf("segment_len: %d\n", segment_len);
-            ///printf("deeper_str_start: %s\n", deeper_str_start);
-            ///printf("next_comma_working_str: %s\n", next_comma_working_str);
 
             if (strstr(deeper_str_start + 1, ",") == NULL){
                 strncpy(deeper_working_string, deeper_str_start, strlen(deeper_str_start));
@@ -165,8 +156,6 @@ int get_game_power(char *source, char **colors, int *max_colors, int length){
             
 
         }
-
-
 
 
         if (loop_done != 1){
